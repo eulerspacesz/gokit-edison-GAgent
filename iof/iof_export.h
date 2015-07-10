@@ -12,7 +12,7 @@
 #define WIFI_SOFTVAR    "04000001"
 
 //product key len is 32 byte
-//#define GAGENT_PRODUCT_KEY  "6f3074fe43894547a4f1314bd7e3ae0b"
+#define GAGENT_PRODUCT_KEY  "1a4e1b253a094e7586ca9d74a4e03597"
 #ifndef GAGENT_PRODUCT_KEY
 #error "product key hasn't be defined!please define product key!!!"
 #endif
