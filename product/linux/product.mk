@@ -3,6 +3,7 @@
 # $< 第一个依赖文件
 
 INC+= -I$(ROOTDIR)/product/linux 
+LIBS=-L./ -lmavlink_control
 
 product: $(TARGET)/$(BIN)
 
@@ -13,6 +14,6 @@ $(ROOTDIR)/iof/iof_hook.c
 
 #target file
 $(TARGET)/$(BIN):
-	$(CC) $(CFLAGS) $(TAGET_FILES) $(LIBTARGET_FILES) $(INC) -o $(TARGET)/$(BIN)
+	$(CC) $(CFLAGS) $(TAGET_FILES) $(LIBS) $(LIBTARGET_FILES) $(INC) -o $(TARGET)/$(BIN)
 	cp $(ROOTDIR)/Projects/linux/rgb $(TARGET)/rgb
 	cp $(ROOTDIR)/Projects/linux/pwm $(TARGET)/pwm
