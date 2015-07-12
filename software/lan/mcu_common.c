@@ -16,7 +16,8 @@ extern "C"{
 
 #include "iof_import.h"
     
- 
+#include "gagent.h"
+
 u8 g_productKey[35]={0};
 int g_productKeyLen = 0;
 
@@ -292,13 +293,60 @@ int MCU_CheckV4Packet(u8 *buffer, int readLen)
 }
 
 
+int MAVLINK_GetPacket(u8* buffer, int bufferMaxLen)
+{
+	int readlen = 0;
+	
+	//G_mavlink_attitude;
+	printf("..........mavlink get packet.............. \n");
+	//header 2 Bytes
+	buffer[readlen++] = 0xFF;
+	buffer[readlen++] = 0xFF;
+	//len 2 Bytes,it is big-endian
+	buffer[readlen++] = 0x00;
+	buffer[readlen++] = 0x09;
+	//cmd 1 Bytes
+	buffer[readlen++] = MCU_REPORT;
+	//sn 1 Bytes
+	buffer[readlen++] = 0x01;
+	//flags 2 Bytes
+	buffer[readlen++] = 0x00;
+	buffer[readlen++] = 0x00;
+	//payload x Bytes
+	
+	buffer[readlen++] = 0x01;// switch on/off, 1 is on, 0 is off.
+
+	//roll
+	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[4];
+	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[5];
+	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[6];
+	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[7];
+	// pitch
+	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[8];
+	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[9];
+	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[10];
+	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[11];
+	// yaw
+	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[12];
+	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[13];
+	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[14];
+	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[15];
+
+	//checksum 1 Bytes
+	buffer[readlen++] =  GAgent_SetCheckSum(buffer,readlen-1);
+
+	return readlen;
+	
+}
+
 int MCU_GetPacket( u8* buffer, int bufferMaxLen )
 {
     int readlen;
 
     if(pf_Gagent_Rx_From_Mcu != NULL)
     {
-        readlen = X86_Serial_Rx_From_Mcu( buffer, bufferMaxLen );
+        //readlen = X86_Serial_Rx_From_Mcu( buffer, bufferMaxLen );
+        readlen = MAVLINK_GetPacket( buffer, bufferMaxLen );
         if ((readlen < 4) || readlen >= bufferMaxLen)
         {
             return 0;    

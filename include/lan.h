@@ -31,6 +31,8 @@ void DispatchTCPData( int nSocket, unsigned char *pData,int datalength);
 
 void MCU_SendData(unsigned char *buffer,int datalen);
 int  MCU_GetPacket(unsigned char *buffer, int bufferMaxLen);
+int  MAVLINK_GetPacket(unsigned char *buffer, int bufferMaxLen);
+
 varc Tran2varc(short remainLen);
 
 void MCU_OutputLOGInfo(char *log, int len, int level);

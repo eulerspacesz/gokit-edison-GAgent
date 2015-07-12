@@ -25,6 +25,7 @@
 #define GAGENT_TIMER_US         0
 
 // declare top ,it come from mavlink_control.so
+/*
 typedef struct __mavlink_attitude_t
 {
  uint32_t time_boot_ms; ///< Timestamp (milliseconds since system boot)
@@ -35,9 +36,29 @@ typedef struct __mavlink_attitude_t
  float pitchspeed; ///< Pitch angular speed (rad/s)
  float yawspeed; ///< Yaw angular speed (rad/s)
 } mavlink_attitude_t;
+*/
+
+typedef union __union_mavlink_attitude{
+
+
+	uint8_t mavlin_attitude[28];
+	typedef struct __mavlink_attitude_t
+	{
+	 uint32_t time_boot_ms; ///< Timestamp (milliseconds since system boot)
+	 float roll; ///< Roll angle (rad, -pi..+pi)
+	 float pitch; ///< Pitch angle (rad, -pi..+pi)
+	 float yaw; ///< Yaw angle (rad, -pi..+pi)
+	 float rollspeed; ///< Roll angular speed (rad/s)
+	 float pitchspeed; ///< Pitch angular speed (rad/s)
+	 float yawspeed; ///< Yaw angular speed (rad/s)
+	} mavlink_attitude_t;
+}union_mavlink_attitude;
+
+
 
 extern int top(mavlink_attitude_t *attitude);
-mavlink_attitude_t G_mavlink_attitude;
+//mavlink_attitude_t G_mavlink_attitude;
+union_mavlink_attitude	G_mavlink_attitude;
 
 
 
