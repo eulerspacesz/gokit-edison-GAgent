@@ -62,6 +62,6 @@ int main(void)
         GAgent_TimerRun();
         GAgent_DoBusiness();
 //		printf("roll =%f,pitch =%f,yaw =%f,rollspeed =%f,pitchspeed =%f,yawspeed=%f \n",G_mavlink_attitude.roll,G_mavlink_attitude.pitch, G_mavlink_attitude.yaw,G_mavlink_attitude.rollspeed,G_mavlink_attitude.pitchspeed,G_mavlink_attitude.yawspeed);
-        //sleep(1);
+        sleep(3);
     }
 }

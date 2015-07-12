@@ -26,8 +26,6 @@ int g_productKeyLen = 0;
 u8 *g_busiProtocolVer; //业务逻辑协议版本号
 u16 g_busiProtocolVerLen;
 
-//extern mavlink_attitude_t G_mavlink_attitude;
-
 int (*pf_Gagent_Tx_To_Mcu)(char *data, int len);
 int (*pf_Gagent_Rx_From_Mcu)(char *data, int len);
 
@@ -309,7 +307,7 @@ int MAVLINK_GetPacket(u8* buffer, int bufferMaxLen)
 	buffer[readlen++] = 0xFF;
 	//len 2 Bytes,it is big-endian
 	buffer[readlen++] = 0x00;
-	buffer[readlen++] = 0x12;
+	buffer[readlen++] = 0x13;
 	//cmd 1 Bytes
 	buffer[readlen++] = MCU_REPORT;
 	//sn 1 Bytes
@@ -317,11 +315,31 @@ int MAVLINK_GetPacket(u8* buffer, int bufferMaxLen)
 	//flags 2 Bytes
 	buffer[readlen++] = 0x00;
 	buffer[readlen++] = 0x00;
+	//action 1 Byte
+	buffer[readlen++] = 0x04;
+
 	//payload x Bytes
 	
 	buffer[readlen++] = 0x01;// switch on/off, 1 is on, 0 is off.
 
 	memcpy(mavlin_attitude,&G_mavlink_attitude,28);
+/*
+	//roll
+	buffer[readlen++] = 0x00; //mavlin_attitude[4];
+	buffer[readlen++] = 0x01; //mavlin_attitude[5];
+	buffer[readlen++] = 0x86; //mavlin_attitude[6];
+	buffer[readlen++] = 0xA0; //mavlin_attitude[7];
+	// pitch
+	buffer[readlen++] = 0x00; //mavlin_attitude[8];
+	buffer[readlen++] = 0x01; //mavlin_attitude[9];
+	buffer[readlen++] = 0x86; //mavlin_attitude[10];
+	buffer[readlen++] = 0xA0; //mavlin_attitude[11];
+	// yaw
+	buffer[readlen++] = 0x00; //mavlin_attitude[12];
+	buffer[readlen++] = 0x01; //mavlin_attitude[13];
+	buffer[readlen++] = 0x86; //mavlin_attitude[14];
+	buffer[readlen++] = 0xA0; //mavlin_attitude[15];
+*/
 	//roll
 	buffer[readlen++] = mavlin_attitude[4];
 	buffer[readlen++] = mavlin_attitude[5];
