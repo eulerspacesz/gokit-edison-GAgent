@@ -299,7 +299,10 @@ int MCU_CheckV4Packet(u8 *buffer, int readLen)
 int MAVLINK_GetPacket(u8* buffer, int bufferMaxLen)
 {
 	int readlen = 0;
-	uint8_t mavlin_attitude[28];
+
+	long temp_roll = 0;
+	long temp_pitch = 0;
+	long temp_yaw = 0;
 	//G_mavlink_attitude;
 	//printf("..........mavlink get packet.............. \n");
 	//header 2 Bytes
@@ -322,39 +325,27 @@ int MAVLINK_GetPacket(u8* buffer, int bufferMaxLen)
 	
 	buffer[readlen++] = 0x01;// switch on/off, 1 is on, 0 is off.
 
-	memcpy(mavlin_attitude,&G_mavlink_attitude,28);
-/*
+	temp_roll  = (G_mavlink_attitude.roll  + 5 )*1000;
+	temp_pitch = (G_mavlink_attitude.pitch + 5 )*1000;
+	temp_yaw   = (G_mavlink_attitude.yaw   + 5 )*1000;
+	
 	//roll
-	buffer[readlen++] = 0x00; //mavlin_attitude[4];
-	buffer[readlen++] = 0x01; //mavlin_attitude[5];
-	buffer[readlen++] = 0x86; //mavlin_attitude[6];
-	buffer[readlen++] = 0xA0; //mavlin_attitude[7];
+	buffer[readlen++] = temp_roll && 0xff000000;
+	buffer[readlen++] = temp_roll && 0x00ff0000;
+	buffer[readlen++] = temp_roll && 0x0000ff00;
+	buffer[readlen++] = temp_roll && 0x000000ff;
 	// pitch
-	buffer[readlen++] = 0x00; //mavlin_attitude[8];
-	buffer[readlen++] = 0x01; //mavlin_attitude[9];
-	buffer[readlen++] = 0x86; //mavlin_attitude[10];
-	buffer[readlen++] = 0xA0; //mavlin_attitude[11];
+	buffer[readlen++] = temp_pitch && 0xff000000;
+	buffer[readlen++] = temp_pitch && 0x00ff0000;
+	buffer[readlen++] = temp_pitch && 0x0000ff00;
+	buffer[readlen++] = temp_pitch && 0x000000ff;
+
 	// yaw
-	buffer[readlen++] = 0x00; //mavlin_attitude[12];
-	buffer[readlen++] = 0x01; //mavlin_attitude[13];
-	buffer[readlen++] = 0x86; //mavlin_attitude[14];
-	buffer[readlen++] = 0xA0; //mavlin_attitude[15];
-*/
-	//roll
-	buffer[readlen++] = mavlin_attitude[4];
-	buffer[readlen++] = mavlin_attitude[5];
-	buffer[readlen++] = mavlin_attitude[6];
-	buffer[readlen++] = mavlin_attitude[7];
-	// pitch
-	buffer[readlen++] = mavlin_attitude[8];
-	buffer[readlen++] = mavlin_attitude[9];
-	buffer[readlen++] = mavlin_attitude[10];
-	buffer[readlen++] = mavlin_attitude[11];
-	// yaw
-	buffer[readlen++] = mavlin_attitude[12];
-	buffer[readlen++] = mavlin_attitude[13];
-	buffer[readlen++] = mavlin_attitude[14];
-	buffer[readlen++] = mavlin_attitude[15];
+	buffer[readlen++] = temp_yaw && 0xff000000;
+	buffer[readlen++] = temp_yaw && 0x00ff0000;
+	buffer[readlen++] = temp_yaw && 0x0000ff00;
+	buffer[readlen++] = temp_yaw && 0x000000ff;
+
 
 	//printf("connor: readlen = %d \n",readlen);
 	//checksum 1 Bytes
