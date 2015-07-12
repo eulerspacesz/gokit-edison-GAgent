@@ -300,9 +300,9 @@ int MAVLINK_GetPacket(u8* buffer, int bufferMaxLen)
 {
 	int readlen = 0;
 
-	long temp_roll = 0;
-	long temp_pitch = 0;
-	long temp_yaw = 0;
+	int temp_roll = 0;
+	int temp_pitch = 0;
+	int temp_yaw = 0;
 	//G_mavlink_attitude;
 	//printf("..........mavlink get packet.............. \n");
 	//header 2 Bytes
@@ -310,7 +310,7 @@ int MAVLINK_GetPacket(u8* buffer, int bufferMaxLen)
 	buffer[readlen++] = 0xFF;
 	//len 2 Bytes,it is big-endian
 	buffer[readlen++] = 0x00;
-	buffer[readlen++] = 0x13;
+	buffer[readlen++] = 0x0A;
 	//cmd 1 Bytes
 	buffer[readlen++] = MCU_REPORT;
 	//sn 1 Bytes
@@ -325,26 +325,18 @@ int MAVLINK_GetPacket(u8* buffer, int bufferMaxLen)
 	
 	buffer[readlen++] = 0x01;// switch on/off, 1 is on, 0 is off.
 
-	temp_roll  = (G_mavlink_attitude.roll  + 5 )*1000;
-	temp_pitch = (G_mavlink_attitude.pitch + 5 )*1000;
-	temp_yaw   = (G_mavlink_attitude.yaw   + 5 )*1000;
-	
+	temp_roll  = G_mavlink_attitude.roll*10  + 4;
+	temp_pitch = G_mavlink_attitude.pitch*10 + 4;
+	temp_yaw   = G_mavlink_attitude.yaw*10   + 4;
+        printf("connor:.... roll = %ld,pitch = %d,yaw = %d\n",temp_roll,temp_pitch,temp_yaw);	
+	printf("connor:.... roll = %f, pitch = %f,yaw =%f\n", G_mavlink_attitude.roll,G_mavlink_attitude.pitch,G_mavlink_attitude.yaw);
 	//roll
-	buffer[readlen++] = temp_roll && 0xff000000;
-	buffer[readlen++] = temp_roll && 0x00ff0000;
-	buffer[readlen++] = temp_roll && 0x0000ff00;
-	buffer[readlen++] = temp_roll && 0x000000ff;
+	buffer[readlen++] = (u8)temp_roll ;
 	// pitch
-	buffer[readlen++] = temp_pitch && 0xff000000;
-	buffer[readlen++] = temp_pitch && 0x00ff0000;
-	buffer[readlen++] = temp_pitch && 0x0000ff00;
-	buffer[readlen++] = temp_pitch && 0x000000ff;
+	buffer[readlen++] = (u8)temp_pitch;
 
 	// yaw
-	buffer[readlen++] = temp_yaw && 0xff000000;
-	buffer[readlen++] = temp_yaw && 0x00ff0000;
-	buffer[readlen++] = temp_yaw && 0x0000ff00;
-	buffer[readlen++] = temp_yaw && 0x000000ff;
+	buffer[readlen++] = (u8)temp_yaw;
 
 
 	//printf("connor: readlen = %d \n",readlen);
