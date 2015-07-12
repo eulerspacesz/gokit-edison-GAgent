@@ -292,7 +292,7 @@ int MCU_CheckV4Packet(u8 *buffer, int readLen)
 
     if (readLen >= packlen)
     {
-	printf("connor:  packlen= %d \n",packlen);
+	//printf("connor:  packlen= %d \n",packlen);
         return packlen;
     }
 }
@@ -309,7 +309,7 @@ int MAVLINK_GetPacket(u8* buffer, int bufferMaxLen)
 	buffer[readlen++] = 0xFF;
 	//len 2 Bytes,it is big-endian
 	buffer[readlen++] = 0x00;
-	buffer[readlen++] = 0x09;
+	buffer[readlen++] = 0x12;
 	//cmd 1 Bytes
 	buffer[readlen++] = MCU_REPORT;
 	//sn 1 Bytes
@@ -338,8 +338,11 @@ int MAVLINK_GetPacket(u8* buffer, int bufferMaxLen)
 	buffer[readlen++] = mavlin_attitude[14];
 	buffer[readlen++] = mavlin_attitude[15];
 
+	//printf("connor: readlen = %d \n",readlen);
 	//checksum 1 Bytes
-	buffer[readlen++] =  GAgent_SetCheckSum(buffer,readlen-1);
+	buffer[readlen++] =  GAgent_SetCheckSum(buffer,readlen);
+
+	//printf("connor: checksum = %d\n", buffer[readlen-1]);
 
 	return readlen;
 	
