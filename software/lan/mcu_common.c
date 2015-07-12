@@ -17,6 +17,7 @@ extern "C"{
 #include "iof_import.h"
     
 #include "gagent.h"
+#include "main.h"
 
 u8 g_productKey[35]={0};
 int g_productKeyLen = 0;
@@ -25,8 +26,11 @@ int g_productKeyLen = 0;
 u8 *g_busiProtocolVer; //业务逻辑协议版本号
 u16 g_busiProtocolVerLen;
 
+//extern mavlink_attitude_t G_mavlink_attitude;
+
 int (*pf_Gagent_Tx_To_Mcu)(char *data, int len);
 int (*pf_Gagent_Rx_From_Mcu)(char *data, int len);
+
 
 void MCU_PasscodeTimer()
 {
@@ -288,6 +292,7 @@ int MCU_CheckV4Packet(u8 *buffer, int readLen)
 
     if (readLen >= packlen)
     {
+	printf("connor:  packlen= %d \n",packlen);
         return packlen;
     }
 }
@@ -296,9 +301,9 @@ int MCU_CheckV4Packet(u8 *buffer, int readLen)
 int MAVLINK_GetPacket(u8* buffer, int bufferMaxLen)
 {
 	int readlen = 0;
-	
+	uint8_t mavlin_attitude[28];
 	//G_mavlink_attitude;
-	printf("..........mavlink get packet.............. \n");
+	//printf("..........mavlink get packet.............. \n");
 	//header 2 Bytes
 	buffer[readlen++] = 0xFF;
 	buffer[readlen++] = 0xFF;
@@ -316,21 +321,22 @@ int MAVLINK_GetPacket(u8* buffer, int bufferMaxLen)
 	
 	buffer[readlen++] = 0x01;// switch on/off, 1 is on, 0 is off.
 
+	memcpy(mavlin_attitude,&G_mavlink_attitude,28);
 	//roll
-	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[4];
-	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[5];
-	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[6];
-	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[7];
+	buffer[readlen++] = mavlin_attitude[4];
+	buffer[readlen++] = mavlin_attitude[5];
+	buffer[readlen++] = mavlin_attitude[6];
+	buffer[readlen++] = mavlin_attitude[7];
 	// pitch
-	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[8];
-	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[9];
-	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[10];
-	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[11];
+	buffer[readlen++] = mavlin_attitude[8];
+	buffer[readlen++] = mavlin_attitude[9];
+	buffer[readlen++] = mavlin_attitude[10];
+	buffer[readlen++] = mavlin_attitude[11];
 	// yaw
-	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[12];
-	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[13];
-	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[14];
-	buffer[readlen++] = G_mavlink_attitude.mavlin_attitude[15];
+	buffer[readlen++] = mavlin_attitude[12];
+	buffer[readlen++] = mavlin_attitude[13];
+	buffer[readlen++] = mavlin_attitude[14];
+	buffer[readlen++] = mavlin_attitude[15];
 
 	//checksum 1 Bytes
 	buffer[readlen++] =  GAgent_SetCheckSum(buffer,readlen-1);
@@ -342,8 +348,9 @@ int MAVLINK_GetPacket(u8* buffer, int bufferMaxLen)
 int MCU_GetPacket( u8* buffer, int bufferMaxLen )
 {
     int readlen;
+	//printf("connor:........get from MCU\n");
 
-    if(pf_Gagent_Rx_From_Mcu != NULL)
+    //if(pf_Gagent_Rx_From_Mcu != NULL)
     {
         //readlen = X86_Serial_Rx_From_Mcu( buffer, bufferMaxLen );
         readlen = MAVLINK_GetPacket( buffer, bufferMaxLen );
